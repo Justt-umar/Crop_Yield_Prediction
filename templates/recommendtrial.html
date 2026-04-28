@@ -299,6 +299,53 @@
             }
         }
 
+        /* IoT Button Styles */
+        .iot-btn {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: auto;
+        }
+        .iot-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+        }
+        .iot-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .iot-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #55efc4;
+            animation: pulse-dot 1.5s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+        .iot-status {
+            font-size: 0.75rem;
+            color: #00b894;
+            margin-top: 5px;
+            text-align: right;
+        }
+        .iot-filled {
+            border-color: #00b894 !important;
+            background: #f0fff4 !important;
+        }
+
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -482,7 +529,11 @@
                         <i class="fas fa-cloud-sun"></i>
                     </div>
                     <h3 class="section-title">Environmental Conditions</h3>
+                    <button type="button" class="iot-btn" id="iotFillBtn" onclick="fillFromIoT()">
+                        <span class="iot-dot"></span> Fill from IoT Sensor
+                    </button>
                 </div>
+                <div class="iot-status" id="iotStatus"></div>
                 
                 <div class="row">
                     <div class="col-md-6">
@@ -734,6 +785,51 @@ document.getElementById("predictionForm").addEventListener("submit", function(e)
         alert("Something went wrong!");
     });
 });
+</script>
+<script>
+function fillFromIoT() {
+    const btn = document.getElementById('iotFillBtn');
+    const status = document.getElementById('iotStatus');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    status.textContent = '';
+
+    fetch('/api/iot-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                status.textContent = '⚠ ' + data.error;
+                status.style.color = '#e17055';
+                return;
+            }
+
+            // Auto-fill fields
+            const fields = ['temperature', 'humidity', 'pressure', 'N', 'P', 'K'];
+            fields.forEach(field => {
+                const input = document.getElementById(field);
+                if (input && data[field] !== undefined && data[field] !== null) {
+                    input.value = data[field];
+                    input.classList.add('iot-filled');
+                    input.dispatchEvent(new Event('input'));
+                }
+            });
+
+            // Show success status with timestamp
+            const ts = data.timestamp ? new Date(data.timestamp).toLocaleString() : 'just now';
+            status.innerHTML = '✅ IoT data loaded — Last reading: ' + ts;
+            status.style.color = '#00b894';
+        })
+        .catch(err => {
+            status.textContent = '⚠ Failed to fetch IoT data';
+            status.style.color = '#e17055';
+            console.error(err);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<span class="iot-dot"></span> Fill from IoT Sensor';
+        });
+}
 </script>
 
 

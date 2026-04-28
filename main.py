@@ -21,6 +21,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from itsdangerous import URLSafeTimedSerializer
 import secrets
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 app = Flask(__name__)
 load_dotenv()
@@ -37,6 +38,17 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 mail = Mail(app)
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+# ================= MongoDB Atlas (IoT Sensor Data) =================
+mongo_uri = os.getenv('MONGO_URI')
+if mongo_uri:
+    mongo_client = MongoClient(mongo_uri)
+    mongo_db = mongo_client['SoilDB']
+    sensor_collection = mongo_db['SensorLogs']
+    print('MongoDB connected successfully')
+else:
+    sensor_collection = None
+    print('MONGO_URI not set — IoT features disabled')
 
 
 # ================= User Model =================
@@ -500,6 +512,40 @@ def send_contact():
     except Exception as e:
         print(e)
         return jsonify({"success": False}), 500
+
+
+# ================= IoT Sensor Data API =================
+
+@app.route('/api/iot-data')
+@login_required
+def get_iot_data():
+    """Fetch the latest IoT sensor reading from MongoDB and return as JSON.
+    Converts temperature from Fahrenheit to Celsius."""
+    if not sensor_collection:
+        return jsonify({"error": "IoT not configured (MONGO_URI missing)"}), 503
+
+    try:
+        latest = sensor_collection.find_one(
+            sort=[("_id", -1)]  # Most recent document
+        )
+        if latest:
+            # Convert Fahrenheit to Celsius
+            temp_f = latest.get("tempF", 0)
+            temp_c = round((temp_f - 32) * 5.0 / 9.0, 2)
+
+            return jsonify({
+                "temperature": temp_c,
+                "humidity": latest.get("humidity"),
+                "pressure": latest.get("pressure"),
+                "N": latest.get("N"),
+                "P": latest.get("P"),
+                "K": latest.get("K"),
+                "timestamp": str(latest.get("_id").generation_time),
+                "source": "IoT Sensor (ESP32)"
+            })
+        return jsonify({"error": "No sensor data available yet"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
