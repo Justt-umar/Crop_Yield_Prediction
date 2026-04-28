@@ -41,14 +41,18 @@ serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 # ================= MongoDB Atlas (IoT Sensor Data) =================
 mongo_uri = os.getenv('MONGO_URI')
+sensor_collection = None
 if mongo_uri:
-    mongo_client = MongoClient(mongo_uri)
-    mongo_db = mongo_client['SoilDB']
-    sensor_collection = mongo_db['SensorLogs']
-    print('MongoDB connected successfully')
+    try:
+        mongo_client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
+        mongo_db = mongo_client['SoilDB']
+        sensor_collection = mongo_db['SensorLogs']
+        print('MongoDB connected successfully')
+    except Exception as e:
+        print(f'MongoDB connection failed: {e}')
+        sensor_collection = None
 else:
-    sensor_collection = None
-    print('MONGO_URI not set — IoT features disabled')
+    print('MONGO_URI not set - IoT features disabled')
 
 
 # ================= User Model =================

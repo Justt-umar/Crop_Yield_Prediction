@@ -18,3 +18,4 @@ pillow==9.5.0
 gunicorn==21.2.0
 plotly==5.7.0
 pymongo==4.7.1
+dnspython==2.8.0
