@@ -525,7 +525,7 @@ def send_contact():
 def get_iot_data():
     """Fetch the latest IoT sensor reading from MongoDB and return as JSON.
     Converts temperature from Fahrenheit to Celsius."""
-    if not sensor_collection:
+    if sensor_collection is None:
         return jsonify({"error": "IoT not configured (MONGO_URI missing)"}), 503
 
     try:
@@ -563,7 +563,7 @@ def iot_upload():
     if api_key != expected_key:
         return jsonify({"error": "Unauthorized"}), 401
 
-    if not sensor_collection:
+    if sensor_collection is None:
         return jsonify({"error": "MongoDB not configured"}), 503
 
     try:
