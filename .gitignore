@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+instance/
+.DS_Store
+.ipynb_checkpoints/
+xgboost-*.tar.gz

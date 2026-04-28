@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/6b8e23/tractor.png">
+    <title>Crop Production Prediction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+         :root {
+      --primary: #6b8e23;
+      --secondary: #d2b48c;
+      --light: #f8f4ec;
+      --dark: #2f2f2f;
+    }
+    html {
+  scroll-behavior: smooth;
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3); /* semi-transparent background for readability */
+  backdrop-filter: blur(5px);     /* optional: adds a blur effect for modern look */
+  z-index: 1000;
+  
+}
+
+        body {
+      background: linear-gradient(135deg, rgba(0,0.5,0.5,0.3), rgba(0,1,0,0.5)),
+                  url("{{ url_for('static', filename='images/crop_image_login1.jpg') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      padding: 20px 0;
+      padding-top: 80px;
+      color: #7cdd91;
+    }
+
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 10px 10px;
+            max-height: 100px;
+            
+        
+        }
+
+        .page-title {
+            text-align: center;
+            color:var(--light);
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            color: #7fb069;
+        }
+
+        .progress-text {
+            margin-right: 10px;
+        }
+
+        .progress-bar-custom {
+            width: 100px;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7fb069, #a8d8a8);
+            width: 0%;
+            border-radius: 2px;
+        }
+
+        .form-section {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  
+    box-shadow: none;
+    margin-bottom: 0;
+    padding: 20px; /* Keep some internal spacing */
+}
+
+        .input
+        {
+            width: 20px;
+        }
+
+        .form-section {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+            padding-top: 20px;
+        }
+
+        .section-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .location-icon {
+            background: linear-gradient(135deg, #ff6b6b, #ff8787);
+        }
+
+        .crop-icon {
+            background: linear-gradient(135deg, #7fb069, #a8d8a8);
+        }
+
+        .weather-icon {
+            background: linear-gradient(135deg, #4ecdc4, #72e8e0);
+        }
+
+        .soil-icon {
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .form-row {
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-control:focus {
+            border-color: #7fb069;
+            box-shadow: 0 0 0 3px rgba(127, 176, 105, 0.1);
+            background: white;
+        }
+
+        .form-control:hover {
+            border-color: #dee2e6;
+            background: white;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            height: 40px;
+            padding:2px;
+        }
+
+
+        .unit-hint {
+            font-size: 0.8rem;
+            color: var(--light);
+            margin-top: 4px;
+        }
+
+        .predict-btn {
+            background: linear-gradient(135deg, #7fb069, #a8d8a8);
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            box-shadow: 0 8px 25px rgba(127, 176, 105, 0.3);
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(127, 176, 105, 0.4);
+        }
+
+        .predict-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .prediction-result {
+            background: linear-gradient(135deg, #a8d8a8, #7fb069);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 8px 25px rgba(127, 176, 105, 0.3);
+        }
+
+        .smart-tip {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            border: 1px solid #7fb069;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .smart-tip-icon {
+            color: #7fb069;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .smart-tip-text {
+            color: #2c5530;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .form-section {
+                padding: 2px;
+                margin-bottom: 20px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            
+            .section-icon {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #7fb069;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6a9c57;
+        }
+
+
+        .logo {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      width: 30px;
+      margin-right: 10px;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 500;
+    font-size: 0.75rem;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+
+   
+    </style>
+</head>
+
+
+
+<body>
+     <header>
+    <div class="logo">
+      <img src="https://img.icons8.com/ios-filled/50/6b8e23/tractor.png" alt="logo" />
+      Farmsight
+    </div>
+    <nav>
+  <ul>
+   <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('home') }}#features">Features</a></li>
+      <li><a href="{{ url_for('home') }}#how-it-works">How It Works</a></li>
+      <li><a href="{{ url_for('home') }}#">Contact</a></li>
+      <li><a href="{{ url_for('logout') }}">Logout</a></li>
+
+
+   </ul>
+</nav>
+
+  </header>
+
+
+    
+    <div class="container">
+        <h2 class="page-title">Crop Production Prediction</h2>
+        
+        <div class="progress-indicator">
+            <span class="progress-text">1 of 4 fields completed</span>
+            <div class="progress-bar-custom">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <form id="predictionForm">
+
+            <!-- Farm Location Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon location-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="section-title">Farm Location</h3>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="state_name">State Name *</label>
+                            <select class="form-control" id="state_name" name="state_name" required>
+                                <option value="">Select State</option>
+                                {% for state in states %}
+                                <option value="{{ state }}">{{ state }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="district_name">District Name *</label>
+                            <select class="form-control" id="district_name" name="district_name" required>
+    <option value="">Select District</option>
+</select>
+
+                        </div>
+                    </div>
+                </div>
+            
+
+            <!-- Crop Details Section -->
+            
+                <div class="section-header">
+                    <div class="section-icon crop-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3 class="section-title">Crop Details</h3>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="crop_year">Crop Year *</label>
+                            <input type="number" class="form-control" id="crop_year" name="crop_year" placeholder="2024" required>
+                            <div class="unit-hint">Enter the harvest year (2014-2035)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="season_name">Season *</label>
+                            <select class="form-control" id="season_name" name="season_name" required>
+                                <option value="">Select Season</option>
+                                {% for season in seasons %}
+                                <option value="{{ season }}">{{ season }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="crop_name">Crop Name *</label>
+                            <select class="form-control" id="crop_name" name="crop_name" required>
+                                <option value="">Select Crop</option>
+                                {% for crop in crops %}
+                                <option value="{{ crop }}">{{ crop }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="area">Area (Hectares) *</label>
+                            <input type="number" class="form-control" id="area" name="area" step="0.01" placeholder="0" required>
+                            <div class="unit-hint">Total cultivation area in hectares</div>
+                        </div>
+                    </div>
+                </div>
+            
+
+            <!-- Environmental Conditions Section -->
+            
+                <div class="section-header">
+                    <div class="section-icon weather-icon">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h3 class="section-title">Environmental Conditions</h3>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="temperature">Average Temperature *</label>
+                            <input type="number" class="form-control" id="temperature" name="temperature" step="0.01" placeholder="K" required>
+                            <div class="unit-hint">K</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="wind_speed">Wind Speed</label>
+                            <input type="number" class="form-control" id="wind_speed" name="wind_speed" step="0.01" placeholder="m/s" required>
+                            <div class="unit-hint">m/s</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="pressure">Pressure *</label>
+                            <input type="number" class="form-control" id="pressure" name="pressure" step="0.01" placeholder="hPa" required>
+                            <div class="unit-hint">hPa</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="humidity">Humidity *</label>
+                            <input type="number" class="form-control" id="humidity" name="humidity" step="0.01" placeholder="%" required>
+                            <div class="unit-hint">%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="precipitation">Precipitation</label>
+                            <input type="number" class="form-control" id="precipitation" name="precipitation" step="0.01" placeholder="mm" required>
+                            <div class="unit-hint">mm</div>
+                        </div>
+                    </div>
+                </div>   
+
+            <!-- Soil & Nutrient Analysis Section -->
+            
+                <div class="section-header">
+                    <div class="section-icon soil-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h3 class="section-title">Soil & Nutrient Analysis</h3>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="soil_type">Soil Type</label>
+                            <select class="form-control" id="soil_type" name="soil_type" required>
+                                <option value="">Select Soil Type</option>
+                                {% for soil in soils %}
+                                <option value="{{ soil }}">{{ soil }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="N">Nitrogen (N)</label>
+                            <input type="number" class="form-control" id="N" name="N" step="0.01" placeholder="kg/ha" required>
+                            <div class="unit-hint">kg/ha</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="P">Phosphorus (P)</label>
+                            <input type="number" class="form-control" id="P" name="P" step="0.01" placeholder="kg/ha" required>
+                            <div class="unit-hint">kg/ha</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="K">Potassium (K)</label>
+                            <input type="number" class="form-control" id="K" name="K" step="0.01" placeholder="kg/ha" required>
+                            <div class="unit-hint">kg/ha</div>
+                        </div>
+                    </div>
+                </div>
+                
+              
+            </div>
+
+            <button type="submit" class="predict-btn">
+                <i class="fas fa-chart-line" style="margin-right: 8px;"></i>
+                Predict Crop Yield
+            </button>
+
+            {% if prediction_text %}
+                <div class="prediction-result">
+                    <i class="fas fa-check-circle" style="margin-right: 10px;"></i>
+                    {{ prediction_text }}
+                </div>
+            {% endif %}
+
+            </div>  
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const requiredFields = Array.from(document.querySelectorAll("form [required]"));
+        const progressText = document.querySelector(".progress-text");
+        const progressFill = document.querySelector(".progress-fill");
+
+        function updateProgress() {
+            let filledCount = requiredFields.filter(input => {
+                // For input/select: check if value is not empty
+                if (input.type === "checkbox" || input.type === "radio") {
+                    return input.checked;
+                } else {
+                    return input.value.trim() !== "";
+                }
+            }).length;
+
+            let total = requiredFields.length;
+            let percentage = Math.round((filledCount / total) * 100);
+
+            // Update progress bar width
+            progressFill.style.width = percentage + "%";
+
+            // Update text
+            progressText.textContent = `${filledCount} of ${total} fields completed`;
+        }
+
+        // Run on load
+        updateProgress();
+
+        // Add event listeners
+        requiredFields.forEach(field => {
+            field.addEventListener("input", updateProgress);
+            field.addEventListener("change", updateProgress);
+        });
+    });
+</script>
+<script>
+document.getElementById("state_name").addEventListener("change", function () {
+    const state = this.value;
+    const districtSelect = document.getElementById("district_name");
+
+    // Reset district dropdown
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+
+    if (!state) return;
+
+    fetch("/get_districts", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ state: state })
+    })
+    .then(response => response.json())
+    .then(districts => {
+        districts.forEach(district => {
+            const option = document.createElement("option");
+            option.value = district;
+            option.textContent = district;
+            districtSelect.appendChild(option);
+        });
+    })
+    .catch(error => {
+        console.error("District load error:", error);
+        alert("Could not load districts");
+    });
+});
+</script>
+<script>
+document.getElementById("district_name").addEventListener("change", function () {
+    const district = this.value;
+    const state = document.getElementById("state_name").value;
+
+    if (!state || !district) return;
+
+    fetch("/get_avg_weather", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            state: state,
+            district: district
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+    const windInput = document.getElementById("wind_speed");
+    const rainInput = document.getElementById("precipitation");
+
+    if (data.avg_wind_speed !== undefined) {
+        windInput.value = data.avg_wind_speed;
+        windInput.dispatchEvent(new Event("input"));
+    }
+
+    if (data.avg_rainfall !== undefined) {
+        rainInput.value = data.avg_rainfall;
+        rainInput.dispatchEvent(new Event("input"));
+    }
+})
+
+});
+</script>
+<script>
+document.getElementById("predictionForm").addEventListener("submit", function(e) {
+    e.preventDefault();  // 🚫 Stop page reload
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    fetch("/predict1", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        let resultBox = document.querySelector(".prediction-result");
+
+        // If result box doesn't exist, create it
+        if (!resultBox) {
+            resultBox = document.createElement("div");
+            resultBox.className = "prediction-result";
+            form.appendChild(resultBox);
+        }
+
+        resultBox.innerHTML = `
+            <i class="fas fa-check-circle" style="margin-right: 10px;"></i>
+            ${data.prediction}
+        `;
+    })
+    .catch(error => {
+        console.error("Prediction error:", error);
+        alert("Something went wrong!");
+    });
+});
+</script>
+
+
+
+</body>
+</html>

@@ -372,7 +372,7 @@ li > a:only-child:after { content: ''; }
 }
 
 .banner-top {
-    background: url(../images/3.jpg) no-repeat center;
+    background: url(../images/r13.jpeg) no-repeat center;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -381,7 +381,7 @@ li > a:only-child:after { content: ''; }
 }
 
 .banner-top1 {
-    background: url(../images/1.jpg) no-repeat center;
+    background: url(../images/r14.jpeg) no-repeat center;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -390,7 +390,7 @@ li > a:only-child:after { content: ''; }
 }
 
 .banner-top2 {
-    background: url(../images/5.jpg) no-repeat center;
+    background: url(../images/r12.jpeg) no-repeat center;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -399,7 +399,7 @@ li > a:only-child:after { content: ''; }
 }
 
 .banner-top3 {
-    background: url(../images/2.jpg) no-repeat center;
+    background: url(../images/Gemini_Generated_Image_wy3movwy3movwy3m.jpeg) no-repeat center;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -550,7 +550,7 @@ p.about-text {
 
 /*-- bg --*/
 .background-img {
-    background: url(../images/5.jpg) no-repeat center;
+    background: url(../images/Gemini_Generated_Image_wy3movwy3movwy3m.jpeg) no-repeat center;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;

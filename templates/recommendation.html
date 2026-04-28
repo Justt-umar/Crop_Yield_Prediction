@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Production Prediction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static\css\recommendationStyle.css">
+
+</head>
+<body>
+    <div class="container">
+        <h2 class="page-title">Crop Production Prediction</h2>
+
+        <div class="form-box">
+        <form action="/predict1" method="post">
+            <div class="form-group">
+                <label for="state_name">State Name</label>
+                <select class="form-control" id="state_name" name="state_name" required>
+                    {% for state in states %}
+                    <option value="{{ state }}">{{ state }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="district_name">District Name</label>
+                <select class="form-control" id="district_name" name="district_name" required>
+                    {% for district in districts %}
+                    <option value="{{ district }}">{{ district }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="crop_year">Crop Year</label>
+                <input type="number" class="form-control" id="crop_year" name="crop_year" required>
+            </div>
+
+            <div class="form-group">
+                <label for="season_name">Season</label>
+                <select class="form-control" id="season_name" name="season_name" required>
+                    {% for season in seasons %}
+                    <option value="{{ season }}">{{ season }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="crop_name">Crop Name</label>
+                <select class="form-control" id="crop_name" name="crop_name" required>
+                    {% for crop in crops %}
+                    <option value="{{ crop }}">{{ crop }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="area">Area (in hectares)</label>
+                <input type="number" class="form-control" id="area" name="area" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="temperature">Temperature (in F)</label>
+                <input type="number" class="form-control" id="temperature" name="temperature" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="wind_speed">Wind Speed (in m/s)</label>
+                <input type="number" class="form-control" id="wind_speed" name="wind_speed" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="precipitation">Precipitation (in mm)</label>
+                <input type="number" class="form-control" id="precipitation" name="precipitation" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="humidity">Humidity (%)</label>
+                <input type="number" class="form-control" id="humidity" name="humidity" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="soil_type">Soil Type</label>
+                <select class="form-control" id="soil_type" name="soil_type" required>
+                    {% for soil in soils %}
+                    <option value="{{ soil }}">{{ soil }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="N">Nitrogen (N)</label>
+                <input type="number" class="form-control" id="N" name="N" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="P">Phosphorus (P)</label>
+                <input type="number" class="form-control" id="P" name="P" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="K">Potassium (K)</label>
+                <input type="number" class="form-control" id="K" name="K" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="pressure">Pressure (in hPa)</label>
+                <input type="number" class="form-control" id="pressure" name="pressure" step="0.01" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Predict Production</button>
+        </form>
+
+        {% if prediction_text %}
+            <h3 class="mt-4">{{ prediction_text }}</h3>
+        {% endif %}
+        </div>
+    </div>
+</body>
+</html>

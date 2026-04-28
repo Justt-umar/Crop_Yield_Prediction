@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Farmsight{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #6b8e23;
+      --secondary: #d2b48c;
+      --light: #f8f4ec;
+      --dark: #2f2f2f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--dark);
+      background-color: var(--light);
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 1.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      width: 30px;
+      margin-right: 10px;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 500;
+      font-size: 0.75rem;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    main {
+      padding-top: 50px; /* Prevent content from being hidden under fixed navbar */
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <img src="https://img.icons8.com/ios-filled/50/6b8e23/tractor.png" alt="logo" />
+      Farmsight
+    </div>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('home') }}#features">Features</a></li>
+        <li><a href="{{ url_for('home') }}#how-it-works">How It Works</a></li>
+        <li><a href="{{ url_for('home') }}#services">Our Services</a></li>
+
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% block body %}{% endblock %}
+  </main>
+</body>
+</html>

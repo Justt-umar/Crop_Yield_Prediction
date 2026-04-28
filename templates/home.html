@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/6b8e23/tractor.png">
+  <title>Farmsight - AI Crop Yield Prediction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b8e23;
+      --secondary: #d2b48c;
+      --light: #f8f4ec;
+      --dark: #2f2f2f;
+    }
+    html {
+  scroll-behavior: smooth;
+}
+
+/* ===== Contact Section ===== */
+.contact.section {
+  padding: 50px 0;
+  color: var(--light);
+}
+
+.contact .section-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  color: var(--primary);
+}
+
+.contact-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+/* Left info panel */
+.contact-info {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 15px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.contact-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color:var(--primary)
+}
+
+.contact-info p {
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+  color: var(--dark);
+}
+
+.contact-details {
+  margin-bottom: 25px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.contact-item i {
+  font-size: 1.2rem;
+  color: var(--dark);
+  margin-top: 4px;
+}
+
+.contact-item h4 {
+  font-size: 0.9rem;
+  margin: 0;
+  color: var(--primary);
+}
+
+.contact-item a,
+.contact-item p {
+  font-size: 0.85rem;
+  color: var(--dark);
+  text-decoration: none;
+}
+
+.contact-item a:hover {
+  text-decoration: underline;
+}
+
+/* Social buttons */
+.contact-social {
+  display: flex;
+  gap: 12px;
+}
+
+.social-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  background: var(--primary);
+  transform: translateY(-3px);
+}
+
+/* ===== Contact Form ===== */
+.contact-form {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 15px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.contact-form .form-group {
+  margin-bottom: 15px;
+}
+
+.contact-form label {
+  font-size: 0.85rem;
+  color: var(--dark);
+  margin-bottom: 5px;
+  display: block;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  font-size: 0.9rem;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.contact-form button {
+  width: 100%;
+  margin-top: 10px;
+  color: var(--primary);
+  
+}
+
+.btn.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--primary);
+  transform: translateY(-3px);
+}
+/* Status message */
+.form-status {
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: -1;
+}
+
+.hero-content {
+  z-index: 1;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--dark);
+      background-color: var(--light);
+    }
+
+    header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3); /* semi-transparent background for readability */
+  backdrop-filter: blur(5px);     /* optional: adds a blur effect for modern look */
+  z-index: 1000;
+}
+
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      width: 30px;
+      margin-right: 10px;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 500;
+    font-size: 0.75rem;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    .account {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 1.5rem;
+}
+
+.account-icon {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) invert(1); /* makes icon white */
+}
+
+.account-info {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: white;
+  color: black;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  z-index: 100;
+  font-size: 0.9rem;
+}
+
+.account:hover .account-info {
+  display: block;
+}
+
+.account-info p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+
+    .hero {
+      background: url('https://images.unsplash.com/photo-1571348500628-1e9b8cfc52ff?auto=format&fit=crop&w=2100&q=80') no-repeat center center/cover;
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero a {
+      background: var(--secondary);
+      padding: 0.8rem 1.5rem;
+      color: black;
+      border-radius: 25px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    section {
+      padding: 4rem 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+
+    .feature {
+      flex: 1 1 250px;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .feature h3 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .step {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .cta-banner {
+      background-color: var(--primary);
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+      border-radius: 10px;
+    }
+
+    .cta-banner a {
+      display: inline-block;
+      margin-top: 1rem;
+      background-color: var(--secondary);
+      color: black;
+      padding: 0.7rem 1.4rem;
+      border-radius: 25px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .features a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.features a .feature {
+  transition: transform 0.2s ease;
+}
+
+.features a:hover .feature {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+.features a {
+  flex: 1 1 250px;
+}
+
+
+
+    footer {
+      background: #222;
+      color: #ccc;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="https://img.icons8.com/ios-filled/50/6b8e23/tractor.png" alt="logo" />
+      Farmsight
+    </div>
+    <nav>
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+</ul>
+
+
+
+   </ul>
+</nav>
+
+  </header>
+
+  <section class="hero">
+  <video autoplay muted loop playsinline class="hero-video">
+         <source src="{{ url_for('static', filename='videos/cropvideo.mp4') }}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Crop Yield Prediction Using AI/ML</h1>
+    <p>Empowering farmers with data-driven insights for better soil health and higher yields.</p>
+    <a href="{{url_for('test_application')}}">Try Prediction</a>
+  </div>
+</section>
+
+  <section id="features">
+    <h2 class="section-title">Our Features</h2>
+    <div class="features">
+      <div class="feature">
+        <h3>Soil Condition Detection</h3>
+        <p>Connect your IoT device and monitor soil moisture, pH, and nutrients in real time.</p>
+      </div>
+      <div class="feature">
+        <h3>AI-Powered Yield Forecast</h3>
+        <p>Get accurate predictions for crop yield based on real-time data and weather patterns.</p>
+      </div>
+      <div class="feature">
+        <h3>Easy Integration</h3>
+        <p>Simple interface to plug in data from your farm devices with zero hassle.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works">
+    <h2 class="section-title">How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <h3>1. Connect Your IoT Device</h3>
+        <p>Send soil and environment data to our platform securely.</p>
+      </div>
+      <div class="step">
+        <h3>2. Analyze with AI</h3>
+        <p>Our ML model processes your data to detect soil conditions and predict yield.</p>
+      </div>
+      <div class="step">
+        <h3>3. Receive Predictions</h3>
+        <p>Get actionable insights to optimize your planting and harvesting decisions.</p>
+      </div>
+    </div>
+  </section>
+
+
+      <section id="contact" class="contact section">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <p>
+                        We are always open to suggestions or bugs you find in the application. Feel free to reach out via email or phone, or send us a message using the form. Let's connect and make farming smarter together!
+                    </p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email</h4>
+                                <a href="mailto:sunharshini@gmail.com">sunharshini@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Phone</h4>
+                                <a href="tel:+918433585677">+91-8433585677</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Location</h4>
+                                <p>Vellore, Tamil Nadu, India</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-btn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://github.com" target="_blank" class="social-btn">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://gitlab.com" target="_blank" class="social-btn">
+                            <i class="fab fa-gitlab"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <div id="formStatus" class="form-status"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+
+  <section class="cta-banner">
+    <h2>Ready to Boost Your Farm's Potential?</h2>
+    <p>Get instant predictions with your soil data. Start now!</p>
+    <a href="#">Try Prediction</a>
+  </section>
+
+  <footer>
+    © 2025 Farmsight. All rights reserved.
+  </footer>
+
+<script>
+document.getElementById("contactForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const statusDiv = document.getElementById("formStatus");
+
+    const payload = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        subject: document.getElementById("subject").value,
+        message: document.getElementById("message").value
+    };
+
+    statusDiv.textContent = "Sending...";
+    statusDiv.style.color = "var(--primary)";
+
+    try {
+        const response = await fetch("/send_contact", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            statusDiv.textContent = " Message sent successfully!";
+            statusDiv.style.color = "var(--primary)";
+            e.target.reset();
+        } else {
+            statusDiv.textContent = "❌ Failed to send message.";
+            statusDiv.style.color = "var(--primary)";
+        }
+    } catch (error) {
+        statusDiv.textContent = "❌ Server error. Try again later.";
+        statusDiv.style.color = "var(--primary)";
+    }
+});
+</script>
+
+
+</body>
+</html>

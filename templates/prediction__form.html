@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmSight - Crop Production Prediction</title>
+    <style>
+
+         :root {
+      --primary: #6b8e23;
+      --secondary: #d2b48c;
+      --light: #f8f4ec;
+      --dark: #2f2f2f;
+    }
+    html {
+  scroll-behavior: smooth;
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--light);
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+            color: #2d3748;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+       header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3); /* semi-transparent background for readability */
+  backdrop-filter: blur(5px);     /* optional: adds a blur effect for modern look */
+  z-index: 1000;
+}
+
+ body {
+      font-family: 'Inter', sans-serif;
+      color: var(--dark);
+      background-color: var(--light);
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      width: 30px;
+      margin-right: 10px;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 500;
+    font-size: 0.75rem;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            padding-top: 80px;
+        }
+
+        .breadcrumbs {
+            margin-bottom: 2rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .breadcrumbs a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumbs a:hover {
+            color: #9AE6B4;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            color: var(--primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #9AE6B4, #68D391, #48BB78);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(154, 230, 180, 0.2);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #68D391;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #9AE6B4, #68D391);
+            width: 45%;
+            transition: width 0.3s ease;
+        }
+
+        .form-sections {
+            display: grid;
+            gap: 2.5rem;
+        }
+
+        .section {
+            background: rgba(248, 250, 252, 0.6);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(203, 213, 224, 0.3);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(203, 213, 224, 0.3);
+        }
+
+        .section-icon {
+            font-size: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-grid.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .field-info {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .form-input, .form-select {
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #68D391;
+            box-shadow: 0 0 0 3px rgba(104, 211, 145, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="%236b7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-unit {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .btn-predict {
+            background: linear-gradient(135deg, #68D391, #38a169);
+            color: white;
+            border: none;
+            padding: 1.25rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(104, 211, 145, 0.3);
+            text-transform: none;
+            letter-spacing: 0.3px;
+            display: block;
+            margin: 2.5rem auto 0;
+            min-width: 200px;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(104, 211, 145, 0.4);
+            background: linear-gradient(135deg, #48BB78, #2f855a);
+        }
+
+        .btn-predict:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 8px 25px rgba(104, 211, 145, 0.3);
+        }
+
+        .validation-message {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .validation-message.error {
+            color: #e53e3e;
+            display: block;
+        }
+
+        .validation-message.success {
+            color: #38a169;
+            display: block;
+        }
+
+        .smart-suggestions {
+            background: rgba(154, 230, 180, 0.1);
+            border: 1px solid rgba(154, 230, 180, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #2f855a;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .form-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(45, 55, 72, 0.9);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .animate-in {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+       
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+     <header>
+    <div class="logo">
+      <img src="https://img.icons8.com/ios-filled/50/6b8e23/tractor.png" alt="logo" />
+      Farmsight
+    </div>
+    <nav>
+  <ul>
+   <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('home') }}#features">Features</a></li>
+      <li><a href="{{ url_for('home') }}#how-it-works">How It Works</a></li>
+      <li><a href="{{ url_for('home') }}#services">Our Services</a></li>
+      <li><a href="{{ url_for('home') }}#">Contact</a></li>
+
+
+   </ul>
+</nav>
+
+  </header>
+
+
+    <div class="container">
+        
+        <div class="hero-section animate-in">
+            <h1 class="hero-title">Predict Your Crop Yield with AI</h1>
+            <p class="hero-subtitle">Get accurate crop production forecasts based on real-time environmental data, soil conditions, and advanced machine learning algorithms.</p>
+        </div>
+
+        <div class="form-card animate-in">
+            <div class="progress-header">
+                <h2 class="form-title">Crop Production Prediction</h2>
+                <div class="progress-indicator">
+                    <span>9 of 20 fields completed</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="predictionForm" action="/predict1" method="post" >
+                <div class="form-sections">
+                    <!-- Location Section -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-icon">📍</span>
+                            <h3 class="section-title">Farm Location</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    State Name <span class="required">*</span>
+                                </label>
+                                <select class="form-select" id="stateName" name="stateName" required>
+    <option value="">Select State</option>
+    {% for state in states %}
+        <option value="{{ state }}">{{ state }}</option>
+    {% endfor %}
+</select>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    District Name <span class="required">*</span>
+                                </label>
+                                <select class="form-select" id="districtName" name="districtName" required>
+    <option value="">Select District</option>
+    {% for district in districts %}
+        <option value="{{ district }}">{{ district }}</option>
+    {% endfor %}
+</select>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Crop Information Section -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-icon">🌾</span>
+                            <h3 class="section-title">Crop Details</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Crop Year <span class="required">*</span>
+                                    <span class="tooltip" data-tooltip="The year you plan to harvest">ℹ️</span>
+                                </label>
+                                <input type="number" class="form-input" id="cropYear" min="2024" max="2030" value="2024" required>
+                                <div class="field-info">Enter the harvest year (2024-2030)</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Season <span class="required">*</span>
+                                </label>
+                                <select class="form-select" id="season" name="season" required>
+    <option value="">Select Season</option>
+    {% for season in seasons %}
+        <option value="{{ season }}">{{ season }}</option>
+    {% endfor %}
+</select>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Crop Name <span class="required">*</span>
+                                </label>
+                               <select class="form-select" id="cropName" name="cropName" required>
+    <option value="">Select Crop</option>
+    {% for crop in crops %}
+        <option value="{{ crop }}">{{ crop }}</option>
+    {% endfor %}
+</select>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Area (Hectares) <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" id="area" step="0.1" min="0.1" required>
+                                    <span class="input-unit">ha</span>
+                                </div>
+                                <div class="field-info">Total cultivation area in hectares</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environmental Conditions Section -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-icon">🌡️</span>
+                            <h3 class="section-title">Environmental Conditions</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Average Temperature <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" id="temperature" step="0.1" min="-10" max="50" required>
+                                    <span class="input-unit">°C</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Wind Speed
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" id="windSpeed" step="0.1" min="0">
+                                    <span class="input-unit">km/h</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Pressure <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" id="pressure" step="0.1" required>
+                                    <span class="input-unit">hPa</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Humidity <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" id="humidity" min="0" max="100" required>
+                                    <span class="input-unit">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soil & Nutrients Section -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-icon">🌱</span>
+                            <h3 class="section-title">Soil & Nutrient Analysis</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Soil Type
+                                </label>
+                               <select class="form-select" id="soilType" name="soilType">
+    <option value="">Select Soil Type</option>
+    {% for soil in soils %}
+        <option value="{{ soil }}">{{ soil }}</option>
+    {% endfor %}
+</select>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Nitrogen (N)
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" id="nitrogen" step="0.1" min="0">
+                                    <span class="input-unit">kg/ha</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Phosphorus (P)
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" id="phosphorus" step="0.1" min="0">
+                                    <span class="input-unit">kg/ha</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Potassium (K)
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" id="potassium" step="0.1" min="0">
+                                    <span class="input-unit">kg/ha</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="smart-suggestions">
+                            💡 <strong>Smart Tip:</strong> For rice cultivation in Nicobars, optimal NPK ratio is typically 120:60:40 kg/ha
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-predict" id="predictBtn">
+                    🔮 Predict Crop Yield
+                </button>
+
+                {% if prediction_text %}
+    <div style="margin-top: 1.5rem; text-align: center; font-size: 1.2rem; color: #2f855a; font-weight: bold;">
+        {{ prediction_text }}
+    </div>
+{% endif %}
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Form validation and interactivity
+        const form = document.getElementById('predictionForm');
+        const progressFill = document.querySelector('.progress-fill');
+        const progressText = document.querySelector('.progress-indicator span');
+        const predictBtn = document.getElementById('predictBtn');
+
+        // Track form completion
+        let completedFields = 0;
+        const totalFields = document.querySelectorAll('input[required], select[required]').length;
+
+        function updateProgress() {
+            const requiredFields = document.querySelectorAll('input[required], select[required]');
+            completedFields = 0;
+            
+            requiredFields.forEach(field => {
+                if (field.value.trim() !== '') {
+                    completedFields++;
+                }
+            });
+
+            const progressPercentage = (completedFields / totalFields) * 100;
+            progressFill.style.width = progressPercentage + '%';
+            progressText.textContent = `${completedFields} of ${totalFields} fields completed`;
+            
+            // Enable/disable predict button
+            predictBtn.disabled = completedFields < totalFields;
+        }
+
+        // Add event listeners to all form inputs
+        document.querySelectorAll('input, select').forEach(field => {
+            field.addEventListener('input', updateProgress);
+            field.addEventListener('change', updateProgress);
+        });
+
+        // Smart defaults and suggestions
+        document.getElementById('stateName').addEventListener('change', function() {
+            const districtSelect = document.getElementById('districtName');
+            // Simulate loading districts based on state
+            // In real implementation, this would fetch from an API
+            if (this.value === 'andaman-nicobar') {
+                districtSelect.innerHTML = `
+                    <option value="">Select District</option>
+                    <option value="nicobars">NICOBARS</option>
+                    <option value="north-south-andaman">North and Middle Andaman</option>
+                    <option value="south-andaman">South Andaman</option>
+                `;
+            }
+        });
+
+        
+
+        // Initialize progress
+        updateProgress();
+
+        // Add animation to sections
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'slideInUp 0.6s ease-out';
+                }
+            });
+        });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Smart suggestions based on input
+        document.getElementById('cropName').addEventListener('change', function() {
+            const suggestions = document.querySelector('.smart-suggestions');
+            const location = document.getElementById('districtName').value;
+            
+            if (this.value && location) {
+                const tips = {
+                    'rice': `For rice cultivation in ${location.toUpperCase()}, optimal NPK ratio is typically 120:60:40 kg/ha`,
+                    'wheat': `Wheat requires cooler temperatures. Consider timing for optimal yield in ${location.toUpperCase()}`,
+                    'maize': `Maize cultivation benefits from 150:75:50 NPK ratio in tropical regions like ${location.toUpperCase()}`
+                };
+                
+                if (tips[this.value]) {
+                    suggestions.innerHTML = `💡 <strong>Smart Tip:</strong> ${tips[this.value]}`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
