@@ -548,6 +548,33 @@ def get_iot_data():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/iot-upload', methods=['POST'])
+def iot_upload():
+    """Receive sensor data from ESP32 and store in MongoDB.
+    ESP32 sends JSON with: tempF, humidity, pressure, N, P, K
+    Secured with a simple API key in the header."""
+    # Simple API key check
+    api_key = request.headers.get('X-API-Key', '')
+    expected_key = os.getenv('IOT_API_KEY', 'farmsight-iot-2026')
+    if api_key != expected_key:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if not sensor_collection:
+        return jsonify({"error": "MongoDB not configured"}), 503
+
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data received"}), 400
+
+        # Insert sensor reading into MongoDB
+        from datetime import datetime
+        data['timestamp'] = datetime.utcnow()
+        sensor_collection.insert_one(data)
+        return jsonify({"status": "ok", "message": "Data stored"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
