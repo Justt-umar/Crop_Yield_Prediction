@@ -273,41 +273,66 @@ def reset_password(token):
 # ================= Lazy-Load Models and Data (avoids Gunicorn timeout) =================
 
 from catboost import CatBoostRegressor
+import gc
 
 model = None
 label_encoders = None
 mappings = None
 training_df = None
-_models_loaded = False
+_encoders_loaded = False
+_heavy_models_loaded = False
 
-def _load_models_and_data():
-    """Load heavy models and CSV data on first request instead of at startup."""
-    global model, label_encoders, mappings, training_df, _models_loaded
-    if _models_loaded:
+# Routes that do NOT need the heavy ML model or CSV data
+_SKIP_HEAVY_LOAD = {
+    'login', 'register', 'logout', 'forgot_password', 'reset_password',
+    'static', 'send_contact', 'iot_upload',
+}
+
+def _load_encoders():
+    """Load only label encoders (tiny, fast ~10KB)."""
+    global label_encoders, mappings, _encoders_loaded
+    if _encoders_loaded:
         return
-
-    print('Loading CatBoost model...')
-    model = CatBoostRegressor()
-    model.load_model('catboost_model.cbm')
-    print('CatBoost model loaded.')
-
     print('Loading label encoders...')
     with open('label_encoders.pkl', 'rb') as f:
         label_encoders = pickle.load(f)
     mappings = {col: dict(zip(le.classes_, le.transform(le.classes_)))
                 for col, le in label_encoders.items()}
     print('Label encoders loaded.')
+    _encoders_loaded = True
 
-    print('Loading training dataset...')
-    training_df = pd.read_csv('output.csv')
-    print(f'Training dataset loaded: {len(training_df)} rows')
+def _load_heavy_models():
+    """Load CatBoost model and CSV data (heavy, ~100MB+ in RAM)."""
+    global model, training_df, _heavy_models_loaded
+    if _heavy_models_loaded:
+        return
 
-    _models_loaded = True
+    _load_encoders()  # Ensure encoders are ready first
+
+    print('Loading CatBoost model...')
+    model = CatBoostRegressor()
+    model.load_model('catboost_model.cbm')
+    print('CatBoost model loaded.')
+
+    # Only load the 5 columns actually used (saves ~250MB RAM)
+    print('Loading training dataset (selected columns only)...')
+    needed_cols = ['state_names', 'district_names', 'area', 'precipitation', 'wind_speed']
+    training_df = pd.read_csv('output.csv', usecols=needed_cols)
+    print(f'Training dataset loaded: {len(training_df)} rows, {len(needed_cols)} columns')
+
+    gc.collect()  # Free any temporary memory
+    _heavy_models_loaded = True
 
 @app.before_request
 def ensure_models_loaded():
-    """Lazy-load models before the first real request."""
-    _load_models_and_data()
+    """Load only what's needed based on the requested route."""
+    endpoint = request.endpoint
+    if endpoint in _SKIP_HEAVY_LOAD:
+        return  # Auth pages don't need models at all
+    _load_encoders()  # Always ensure encoders are available
+    if endpoint in ('predict1', 'get_avg_weather', 'get_districts',
+                     'test_application', 'get_iot_data'):
+        _load_heavy_models()  # Only load heavy stuff for prediction routes
 
 
 def get_avg_rain_wind_by_area(area):
