@@ -85,7 +85,7 @@ def ensure_models_loaded():
     if endpoint in _SKIP_ALL_LOAD or endpoint is None:
         return
     if endpoint in ('predict1', 'get_avg_weather', 'get_districts',
-                     'test_application', 'get_iot_data'):
+                     'get_iot_data'):
         _load_heavy_models()
     elif endpoint in ('preprocessing_data', 'eda_data', 'models_data',
                        'disease_prediction'):
@@ -104,6 +104,10 @@ def home():
 @app.route('/test_application')
 def test_application():
     _load_encoders()
+    # Start loading heavy models in background while user fills the form
+    if not _heavy_models_loaded:
+        import threading
+        threading.Thread(target=_load_heavy_models, daemon=True).start()
     return render_template(
         'recommendtrial.html',
         states=label_encoders['state_names'].classes_,
