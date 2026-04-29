@@ -270,26 +270,46 @@ def reset_password(token):
     return render_template('reset_password.html', form=form)
 
 
-# ================= Load Models and Mappings =================
+# ================= Lazy-Load Models and Data (avoids Gunicorn timeout) =================
 
 from catboost import CatBoostRegressor
 
-# Load CatBoost model
-model = CatBoostRegressor()
-model.load_model('catboost_model.cbm')
+model = None
+label_encoders = None
+mappings = None
+training_df = None
+_models_loaded = False
 
-# Load label encoders
-with open('label_encoders.pkl', 'rb') as f:
-    label_encoders = pickle.load(f)
+def _load_models_and_data():
+    """Load heavy models and CSV data on first request instead of at startup."""
+    global model, label_encoders, mappings, training_df, _models_loaded
+    if _models_loaded:
+        return
 
-mappings = {col: dict(zip(le.classes_, le.transform(le.classes_)))
-            for col, le in label_encoders.items()}
+    print('Loading CatBoost model...')
+    model = CatBoostRegressor()
+    model.load_model('catboost_model.cbm')
+    print('CatBoost model loaded.')
+
+    print('Loading label encoders...')
+    with open('label_encoders.pkl', 'rb') as f:
+        label_encoders = pickle.load(f)
+    mappings = {col: dict(zip(le.classes_, le.transform(le.classes_)))
+                for col, le in label_encoders.items()}
+    print('Label encoders loaded.')
+
+    print('Loading training dataset...')
+    training_df = pd.read_csv('output.csv')
+    print(f'Training dataset loaded: {len(training_df)} rows')
+
+    _models_loaded = True
+
+@app.before_request
+def ensure_models_loaded():
+    """Lazy-load models before the first real request."""
+    _load_models_and_data()
 
 
-
-# ================= Load Training Dataset =================
-
-training_df = pd.read_csv('output.csv')
 def get_avg_rain_wind_by_area(area):
     """
     Returns average precipitation and wind_speed
